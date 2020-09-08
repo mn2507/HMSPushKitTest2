@@ -4,12 +4,18 @@ import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.Display
 import android.view.View
+import android.view.WindowManager
 import android.webkit.JavascriptInterface
+import android.webkit.WebView
+import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -22,32 +28,36 @@ import com.huawei.hms.api.ConnectionResult
 import com.huawei.hms.api.HuaweiApiAvailability
 import com.huawei.hms.push.HmsMessaging
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_webview.*
 
 
 @Suppress("DEPRECATED_IDENTITY_EQUALS")
 class MainActivity : AppCompatActivity() {
 
+
     lateinit var etUrl: TextView
+ //   private lateinit var wv_response2: WebView
     private val locationPermission = ACCESS_FINE_LOCATION
     private val LOCATION_PERMISSION_CODE = 100
+    private lateinit var tvMessage: EditText
 
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         etUrl = findViewById(R.id.et_url)
+        tvMessage = findViewById(R.id.et_message_android)
+     //   wv_response2 =findViewById(R.id.wv_response)
         etUrl.text = getSavedUrl()
         val inst = HmsInstanceId.getInstance(this)
         btn_show_token.setOnClickListener { getToken(inst) }
 
-        btn_load_android.setOnClickListener {
-            checkPermission(
-                locationPermission,
-                LOCATION_PERMISSION_CODE
-            )
-            Log.d("Tag0", "entering checkPermission btn")
-        }
 
+
+        //Webview scaling
+        val webView = WebView(this)
+
+        //textView copy-paste func
         tv_token.setOnLongClickListener {
             val text: String = tv_token.text.toString()
             val manager =
@@ -62,21 +72,35 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        wv_response.settings.javaScriptEnabled = true
-        wv_response.addJavascriptInterface(JavaScriptInterface(), Android)
-        wv_response.loadUrl(etUrl.text.toString())
+   //     wv_response2.settings.javaScriptEnabled = true
+    //    wv_response2.addJavascriptInterface(JavaScriptInterface(), Android)
+   //     wv_response2.loadUrl(etUrl.text.toString())
 
         btn_load_android.setOnClickListener {
+            val intent= Intent(this, WebViewActivity::class.java)
+            if(et_url.text!=null && tvMessage.text!=null)
+            {
+                intent.putExtra("url",et_url.text.toString())
+                intent.putExtra("message",tvMessage.text.toString())
+                startActivity(intent)
+            }
+            else
+            {
+                Toast.makeText(this,"URL cannot be empty",Toast.LENGTH_LONG).show()
+            }
+
+
+
             onSetBaseUrl(etUrl.text.toString())
-            wv_response.loadUrl(etUrl.text.toString())
+       //     wv_response2.loadUrl(etUrl.text.toString())
         }
 
-        btn_send_android.setOnClickListener {
-            wv_response.evaluateJavascript(
-                "javascript: " +
-                        "updateFromAndroid(\"" + et_message_android.text + "\")", null
-            )
-        }
+   //     btn_send_android.setOnClickListener {
+   //         wv_response2.evaluateJavascript(
+    //            "javascript: " +
+   //                     "updateFromAndroid(\"" + et_message_android.text + "\")", null
+   //         )
+    //    }
     }
 
     public fun onSetBaseUrl(url: String) {
@@ -99,18 +123,18 @@ class MainActivity : AppCompatActivity() {
         return baseURL
     }
 
-    override fun onDestroy() {
-        wv_response.removeJavascriptInterface(Android)
-        super.onDestroy()
-    }
+//    override fun onDestroy() {
+//        wv_response2.removeJavascriptInterface(Android)
+//        super.onDestroy()
+//    }
 
-    private fun injectJavaScriptFunction() {
-        wv_response.loadUrl(
-            "javascript: " +
-                    "window.androidObj.displayMessageFromAndroid = function(message) { " +
-                    Android + ".textFromWeb(message) }"
-        )
-    }
+//    private fun injectJavaScriptFunction() {
+//        wv_response2.loadUrl(
+//            "javascript: " +
+//                    "window.androidObj.displayMessageFromAndroid = function(message) { " +
+//                    Android + ".textFromWeb(message) }"
+//        )
+//    }
 
     private inner class JavaScriptInterface {
         @JavascriptInterface
@@ -121,7 +145,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
 
-        private val Android = "javascript_obj"
+        val Android = "javascript_obj"
         private val BASE_URL = "https://d1iklor05b0e96.cloudfront.net/LocatedMap/index.html"
     }
 
@@ -276,7 +300,6 @@ class MainActivity : AppCompatActivity() {
             == PackageManager.PERMISSION_DENIED
         ) {
 
-            // Requesting the permission
             ActivityCompat.requestPermissions(
                 this@MainActivity, arrayOf(permission),
                 requestCode
