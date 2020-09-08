@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">HMSPushKitTest</string>
+    <string name="hms_token">HMS Token: %s</string>
+    <string name="title_location_permission">Test1</string>
+    <string name="text_location_permission">Test2</string>
+    <string name="ok">OK</string>
+</resources>
