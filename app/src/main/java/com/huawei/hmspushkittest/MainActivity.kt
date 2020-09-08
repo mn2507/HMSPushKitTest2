@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         wv_response.settings.javaScriptEnabled = true
-        wv_response.addJavascriptInterface(JavaScriptInterface(), JAVASCRIPT_OBJ)
+        wv_response.addJavascriptInterface(JavaScriptInterface(), Android)
         wv_response.loadUrl(etUrl.text.toString())
 
         btn_load_android.setOnClickListener {
@@ -82,9 +82,14 @@ class MainActivity : AppCompatActivity() {
     public fun onSetBaseUrl(url: String) {
 
         val sharedPref = this?.getSharedPreferences("SHARED", Context.MODE_PRIVATE)
-
+        val customUrl = etUrl.text.toString()
         val editor = sharedPref.edit()
-        editor.putString("url", etUrl.text.toString())
+
+        if (etUrl.length() == 0) {
+            editor.putString("url", BASE_URL)
+        } else {
+            editor.putString("url", customUrl)
+        }
         editor.apply()
     }
 
@@ -95,7 +100,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        wv_response.removeJavascriptInterface(JAVASCRIPT_OBJ)
+        wv_response.removeJavascriptInterface(Android)
         super.onDestroy()
     }
 
@@ -103,7 +108,7 @@ class MainActivity : AppCompatActivity() {
         wv_response.loadUrl(
             "javascript: " +
                     "window.androidObj.displayMessageFromAndroid = function(message) { " +
-                    JAVASCRIPT_OBJ + ".textFromWeb(message) }"
+                    Android + ".textFromWeb(message) }"
         )
     }
 
@@ -116,9 +121,8 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
 
-        private val JAVASCRIPT_OBJ = "javascript_obj"
-        private val BASE_URL = "https://www.google.com/"
-        private const val REQUEST_LOCATION_PERMISSION = 1
+        private val Android = "javascript_obj"
+        private val BASE_URL = "https://d1iklor05b0e96.cloudfront.net/LocatedMap/index.html"
     }
 
     private fun getToken(inst: HmsInstanceId) {
@@ -240,8 +244,6 @@ class MainActivity : AppCompatActivity() {
 //                )
 //            }
 //        }
-
-
 
 
 //    override fun onRequestPermissionsResult(
