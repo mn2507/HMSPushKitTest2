@@ -88,6 +88,6 @@ class WebViewActivity : AppCompatActivity() {
 
     companion object {
         private const val Android = "javascript_obj"
-        private const val BASE_URL = "file:///android_asset/webview.html"
+        private const val BASE_URL = "https://d1iklor05b0e96.cloudfront.net/LocatedMap/index.html"
     }
 }

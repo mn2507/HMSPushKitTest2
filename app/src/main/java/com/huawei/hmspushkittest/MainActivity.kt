@@ -126,12 +126,12 @@ class MainActivity : AppCompatActivity() {
         val sharedPref = this?.getSharedPreferences("SHARED", Context.MODE_PRIVATE)
         val customUrl = etUrl.text.toString()
         val editor = sharedPref.edit()
-
-        if (etUrl.length() == 0) {
-            editor.putString("url", BASE_URL)
-        } else {
-            editor.putString("url", customUrl)
-        }
+        editor.putString("url", BASE_URL)
+//        if (etUrl.length() == 0) {
+//            editor.putString("url", BASE_URL)
+//        } else {
+//            editor.putString("url", customUrl)
+//        }
         editor.apply()
     }
 
@@ -165,8 +165,8 @@ class MainActivity : AppCompatActivity() {
     companion object {
 
         val Android = "javascript_obj"
-        private val BASE_URL = "file:///android_asset/webview.html"
-//        private val BASE_URL = "https://d1iklor05b0e96.cloudfront.net/LocatedMap/index.html"
+//        private val BASE_URL = "file:///android_asset/webview.html"
+        private val BASE_URL = "https://d1iklor05b0e96.cloudfront.net/LocatedMap/index.html"
     }
 
     private fun getToken(inst: HmsInstanceId) {
