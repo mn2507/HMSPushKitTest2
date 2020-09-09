@@ -36,9 +36,8 @@ class MainActivity : AppCompatActivity() {
 
 
     lateinit var etUrl: TextView
- //   private lateinit var wv_response2: WebView
-    private val locationPermission = ACCESS_FINE_LOCATION
-    private val LOCATION_PERMISSION_CODE = 100
+
+    //   private lateinit var wv_response2: WebView
     private lateinit var tvMessage: EditText
 
     @RequiresApi(Build.VERSION_CODES.KITKAT)
@@ -47,12 +46,34 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         etUrl = findViewById(R.id.et_url)
         tvMessage = findViewById(R.id.et_message_android)
-     //   wv_response2 =findViewById(R.id.wv_response)
+        //   wv_response2 =findViewById(R.id.wv_response)
         etUrl.text = getSavedUrl()
         val inst = HmsInstanceId.getInstance(this)
         btn_show_token.setOnClickListener { getToken(inst) }
 
-
+//      Runtime Location
+        if (ContextCompat.checkSelfPermission(
+                this@MainActivity,
+                ACCESS_FINE_LOCATION
+            ) !==
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    this@MainActivity,
+                    ACCESS_FINE_LOCATION
+                )
+            ) {
+                ActivityCompat.requestPermissions(
+                    this@MainActivity,
+                    arrayOf(ACCESS_FINE_LOCATION), 1
+                )
+            } else {
+                ActivityCompat.requestPermissions(
+                    this@MainActivity,
+                    arrayOf(ACCESS_FINE_LOCATION), 1
+                )
+            }
+        }
 
         //Webview scaling
         val webView = WebView(this)
@@ -72,35 +93,32 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-   //     wv_response2.settings.javaScriptEnabled = true
-    //    wv_response2.addJavascriptInterface(JavaScriptInterface(), Android)
-   //     wv_response2.loadUrl(etUrl.text.toString())
+        //     wv_response2.settings.javaScriptEnabled = true
+        //    wv_response2.addJavascriptInterface(JavaScriptInterface(), Android)
+        //     wv_response2.loadUrl(etUrl.text.toString())
 
         btn_load_android.setOnClickListener {
-            val intent= Intent(this, WebViewActivity::class.java)
-            if(et_url.text!=null && tvMessage.text!=null)
-            {
-                intent.putExtra("url",et_url.text.toString())
-                intent.putExtra("message",tvMessage.text.toString())
+            val intent = Intent(this, WebViewActivity::class.java)
+            if (et_url.text != null && tvMessage.text != null) {
+                intent.putExtra("url", et_url.text.toString())
+                intent.putExtra("message", tvMessage.text.toString())
 
                 startActivity(intent)
-            }
-            else
-            {
-                Toast.makeText(this,"URL cannot be empty",Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(this, "URL cannot be empty", Toast.LENGTH_LONG).show()
             }
 
 
             onSetBaseUrl(etUrl.text.toString())
-       //     wv_response2.loadUrl(etUrl.text.toString())
+            //     wv_response2.loadUrl(etUrl.text.toString())
         }
 
-   //     btn_send_android.setOnClickListener {
-   //         wv_response2.evaluateJavascript(
-    //            "javascript: " +
-   //                     "updateFromAndroid(\"" + et_message_android.text + "\")", null
-   //         )
-    //    }
+        //     btn_send_android.setOnClickListener {
+        //         wv_response2.evaluateJavascript(
+        //            "javascript: " +
+        //                     "updateFromAndroid(\"" + et_message_android.text + "\")", null
+        //         )
+        //    }
     }
 
     public fun onSetBaseUrl(url: String) {
@@ -140,13 +158,15 @@ class MainActivity : AppCompatActivity() {
         @JavascriptInterface
         fun displayMessageFromWeb(fromWeb: String) {
             tv_response_android.text = fromWeb
+            intent.putExtra("messagefromWeb", et_url.text.toString())
         }
     }
 
     companion object {
 
         val Android = "javascript_obj"
-        private val BASE_URL = "https://d1iklor05b0e96.cloudfront.net/LocatedMap/index.html"
+        private val BASE_URL = "file:///android_asset/webview.html"
+//        private val BASE_URL = "https://d1iklor05b0e96.cloudfront.net/LocatedMap/index.html"
     }
 
     private fun getToken(inst: HmsInstanceId) {
@@ -245,108 +265,31 @@ class MainActivity : AppCompatActivity() {
         Log.d("Tag0", "entering isHuaweiMobileServicesAvailable 3")
     }
 
-//
-//        if (ContextCompat.checkSelfPermission(
-//                this@MainActivity,
-//                ACCESS_FINE_LOCATION
-//            ) !==
-//            PackageManager.PERMISSION_GRANTED
-//        ) {
-//            if (ActivityCompat.shouldShowRequestPermissionRationale(
-//                    this@MainActivity,
-//                    ACCESS_FINE_LOCATION
-//                )
-//            ) {
-//                ActivityCompat.requestPermissions(
-//                    this@MainActivity,
-//                    arrayOf(ACCESS_FINE_LOCATION), 1
-//                )
-//            } else {
-//                ActivityCompat.requestPermissions(
-//                    this@MainActivity,
-//                    arrayOf(ACCESS_FINE_LOCATION), 1
-//                )
-//            }
-//        }
-
-
-//    override fun onRequestPermissionsResult(
-//        requestCode: Int, permissions: Array<String>,
-//        grantResults: IntArray
-//    ) {
-//        when (requestCode) {
-//            1 -> {
-//                if (grantResults.isNotEmpty() && grantResults[0] ==
-//                    PackageManager.PERMISSION_GRANTED
-//                ) {
-//                    if ((ContextCompat.checkSelfPermission(
-//                            this@MainActivity,
-//                            ACCESS_FINE_LOCATION
-//                        ) ===
-//                                PackageManager.PERMISSION_GRANTED)
-//                    ) {
-//                        Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
-//                    }
-//                } else {
-//                    Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
-//                }
-//                return
-//            }
-//        }
-//    }
-
-    fun checkPermission(permission: String, requestCode: Int) {
-        if (ContextCompat.checkSelfPermission(this@MainActivity, permission)
-            == PackageManager.PERMISSION_DENIED
-        ) {
-
-            ActivityCompat.requestPermissions(
-                this@MainActivity, arrayOf(permission),
-                requestCode
-            )
-        } else {
-            Toast.makeText(
-                this@MainActivity,
-                "Permission already granted",
-                Toast.LENGTH_SHORT
-            )
-                .show()
-        }
-        Log.d("Tag0", "entering checkPermission")
-    }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String?>,
+        requestCode: Int, permissions: Array<String>,
         grantResults: IntArray
     ) {
-        super
-            .onRequestPermissionsResult(
-                requestCode,
-                permissions,
-                grantResults
-            )
-        if (requestCode == LOCATION_PERMISSION_CODE) {
-            if (grantResults.isNotEmpty()
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED
-            ) {
-                Toast.makeText(
-                    this@MainActivity,
-                    "Camera Permission Granted",
-                    Toast.LENGTH_SHORT
-                )
-                    .show()
-            } else {
-                Toast.makeText(
-                    this@MainActivity,
-                    "Camera Permission Denied",
-                    Toast.LENGTH_SHORT
-                )
-                    .show()
+        when (requestCode) {
+            1 -> {
+                if (grantResults.isNotEmpty() && grantResults[0] ==
+                    PackageManager.PERMISSION_GRANTED
+                ) {
+                    if ((ContextCompat.checkSelfPermission(
+                            this@MainActivity,
+                            ACCESS_FINE_LOCATION
+                        ) ===
+                                PackageManager.PERMISSION_GRANTED)
+                    ) {
+                        Toast.makeText(this, "Location permission Granted", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                } else {
+                    Toast.makeText(this, "Location permission Denied", Toast.LENGTH_SHORT).show()
+                }
+                return
             }
         }
-        Log.d("Tag0", "entering onRequestPermissionsResult")
     }
-
 }
 
