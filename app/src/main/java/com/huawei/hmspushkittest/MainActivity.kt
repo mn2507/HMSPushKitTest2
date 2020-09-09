@@ -164,8 +164,9 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
 
-        val Android = "javascript_obj"
-//        private val BASE_URL = "file:///android_asset/webview.html"
+        val Android = "Android"
+
+        //        private val BASE_URL = "file:///android_asset/webview.html"
         private val BASE_URL = "https://d1iklor05b0e96.cloudfront.net/LocatedMap/index.html"
     }
 
