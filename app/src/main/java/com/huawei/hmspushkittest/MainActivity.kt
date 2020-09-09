@@ -82,13 +82,13 @@ class MainActivity : AppCompatActivity() {
             {
                 intent.putExtra("url",et_url.text.toString())
                 intent.putExtra("message",tvMessage.text.toString())
+
                 startActivity(intent)
             }
             else
             {
                 Toast.makeText(this,"URL cannot be empty",Toast.LENGTH_LONG).show()
             }
-
 
 
             onSetBaseUrl(etUrl.text.toString())
