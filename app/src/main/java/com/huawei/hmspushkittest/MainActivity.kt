@@ -1,11 +1,15 @@
 package com.huawei.hmspushkittest
 
+import android.Manifest
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -33,9 +37,10 @@ import kotlinx.android.synthetic.main.activity_webview.*
 
 @Suppress("DEPRECATED_IDENTITY_EQUALS")
 class MainActivity : AppCompatActivity() {
-
-
     lateinit var etUrl: TextView
+    lateinit var locationManager: LocationManager
+    private var mlongitude: String ="test"
+    private var mLatitude: String ="test"
 
     //   private lateinit var wv_response2: WebView
     private lateinit var tvMessage: EditText
@@ -50,30 +55,6 @@ class MainActivity : AppCompatActivity() {
         etUrl.text = getSavedUrl()
         val inst = HmsInstanceId.getInstance(this)
         btn_show_token.setOnClickListener { getToken(inst) }
-
-//      Runtime Location
-        if (ContextCompat.checkSelfPermission(
-                this@MainActivity,
-                ACCESS_FINE_LOCATION
-            ) !==
-            PackageManager.PERMISSION_GRANTED
-        ) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this@MainActivity,
-                    ACCESS_FINE_LOCATION
-                )
-            ) {
-                ActivityCompat.requestPermissions(
-                    this@MainActivity,
-                    arrayOf(ACCESS_FINE_LOCATION), 1
-                )
-            } else {
-                ActivityCompat.requestPermissions(
-                    this@MainActivity,
-                    arrayOf(ACCESS_FINE_LOCATION), 1
-                )
-            }
-        }
 
         //Webview scaling
         val webView = WebView(this)
@@ -103,6 +84,7 @@ class MainActivity : AppCompatActivity() {
                 intent.putExtra("url", et_url.text.toString())
                 intent.putExtra("message", tvMessage.text.toString())
 
+
                 startActivity(intent)
             } else {
                 Toast.makeText(this, "URL cannot be empty", Toast.LENGTH_LONG).show()
@@ -123,7 +105,7 @@ class MainActivity : AppCompatActivity() {
 
     public fun onSetBaseUrl(url: String) {
 
-        val sharedPref = this?.getSharedPreferences("SHARED", Context.MODE_PRIVATE)
+        val sharedPref = this.getSharedPreferences("SHARED", Context.MODE_PRIVATE)
         val customUrl = etUrl.text.toString()
         val editor = sharedPref.edit()
         editor.putString("url", BASE_URL)
@@ -292,5 +274,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+
 }
 

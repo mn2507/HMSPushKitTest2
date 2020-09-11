@@ -1,20 +1,11 @@
 package com.huawei.hmspushkittest
 
 import android.app.AlertDialog
-import android.app.Dialog
 import android.os.Bundle
-import android.os.Parcelable
-import android.util.Log
-import android.view.Window
-import android.webkit.JavascriptInterface
-import android.webkit.WebView
-import android.webkit.WebViewClient
-import android.widget.Button
-import android.widget.TextView
+import android.webkit.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.huawei.hmspushkittest.MainActivity.Companion.Android
-import kotlinx.android.synthetic.main.activity_main.*
+
 
 class WebViewActivity : AppCompatActivity() {
 
@@ -36,10 +27,19 @@ class WebViewActivity : AppCompatActivity() {
                 url = intent.extras!!["url"].toString()
                 messages = intent.extras!!["message"].toString()
                 messageWeb = intent.extras!!["messagefromWeb"].toString()
+
             }
         }
 
         wvResponse2.settings.javaScriptEnabled = true
+        wvResponse2.webChromeClient = object : WebChromeClient() {
+            override fun onGeolocationPermissionsShowPrompt(
+                origin: String,
+                callback: GeolocationPermissions.Callback
+            ) {
+                callback.invoke(origin, true, false)
+            }
+        }
         wvResponse2.addJavascriptInterface(JavaScriptInterface(), Android)
         wvResponse2.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView, url: String) {
@@ -49,6 +49,12 @@ class WebViewActivity : AppCompatActivity() {
             }
         }
         wvResponse2.loadUrl(url)
+    }
+
+
+
+    fun showLocation(latitude: String, longitude: String) {
+        Toast.makeText(this, "Latitude:$latitude ,Longitude:$longitude", Toast.LENGTH_LONG).show()
     }
 
     fun showAlertDialog(message: String) {
@@ -91,3 +97,4 @@ class WebViewActivity : AppCompatActivity() {
         private const val BASE_URL = "https://d1iklor05b0e96.cloudfront.net/LocatedMap/index.html"
     }
 }
+
