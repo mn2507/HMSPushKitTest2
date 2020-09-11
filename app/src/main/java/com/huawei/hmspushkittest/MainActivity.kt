@@ -56,6 +56,20 @@ class MainActivity : AppCompatActivity() {
         val inst = HmsInstanceId.getInstance(this)
         btn_show_token.setOnClickListener { getToken(inst) }
 
+        //Runtime Location
+        if (ContextCompat.checkSelfPermission(this@MainActivity,
+                ACCESS_FINE_LOCATION) !==
+            PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this@MainActivity,
+                    ACCESS_FINE_LOCATION)) {
+                ActivityCompat.requestPermissions(this@MainActivity,
+                    arrayOf(ACCESS_FINE_LOCATION), 1)
+            } else {
+                ActivityCompat.requestPermissions(this@MainActivity,
+                    arrayOf(ACCESS_FINE_LOCATION), 1)
+            }
+        }
+
         //Webview scaling
         val webView = WebView(this)
 
@@ -105,7 +119,7 @@ class MainActivity : AppCompatActivity() {
 
     public fun onSetBaseUrl(url: String) {
 
-        val sharedPref = this.getSharedPreferences("SHARED", Context.MODE_PRIVATE)
+        val sharedPref = this?.getSharedPreferences("SHARED", Context.MODE_PRIVATE)
         val customUrl = etUrl.text.toString()
         val editor = sharedPref.edit()
         editor.putString("url", BASE_URL)
